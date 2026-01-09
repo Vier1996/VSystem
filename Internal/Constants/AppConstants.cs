@@ -32,16 +32,38 @@ public class AppConstants
         public const string Extension = ".visd";
     }
 
-    public static class Server
+    public static class DDNS
     {
-        public const string ClientConnectedMessage = "Client with endpoint {0} connected!";
-        public const string ClientDisconnectedMessage = "Client with endpoint {0} disconnected!";
-        public const string ClientHandlingError = "Client with endpoint {0} fauted with error - {1}";
+        public const string ExternalIpGettingErrorMessage = "Failed to get external IP: {0}";
+        public const string NewDDNSMessage = "New DDNS: {0}";
+        public const string FailedUpdateDDNSErrorMessage = "Failed to update DDNS: {0}";
     }
 
     public static class Dependencies
     {
         public const string AlreadyRegisterDependencyWarningMessage = "Service of type [{0}] already registered!";
         public const string NotFoundDependencyErrorMessage = "Service of type [{0}] not found at container!";
+    }
+    
+    public static class Server
+    {
+        public const string ClientEndpointDefaultName = "Unknown";
+        public const string ClientConnectedMessage = "Client with endpoint {0} connected!";
+        public const string ClientDisconnectedMessage = "Client with endpoint {0} disconnected!";
+        public const string ClientHandlingError = "Client with endpoint {0} fauted with error - {1}";
+        public const string ClientDisconnectingError = "Error disconnecting client: {0}";
+        
+        public const string NotFoundExecutorForRequestErrorMessage = "[{0}] Not found Executor for API: [{1}]";
+        public const string FailedExecutingToClientResponseMessage = "[{0}] Error processing message '{1}': by {2}";
+        
+        public const string SuccessStartingServerMessage = "Server started with IP: {0}";
+        public const string FailedToStartServerErrorMessage = "Failed to start server: {0}";
+        public const string FailedToAcceptClientErrorMessage = "Error accepting client: {0}";
+        public const string FailedToHandleClientErrorMessage = "Client {0} error: {1}";
+    }
+    
+    public static class ServerAPI
+    {
+        public const string ServerTime = "Server/Time"; // получение времени на сервере (тест)
     }
 }

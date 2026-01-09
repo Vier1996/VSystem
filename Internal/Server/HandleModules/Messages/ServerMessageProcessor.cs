@@ -1,31 +1,35 @@
+using System.Net;
+using System.Net.Sockets;
+using Newtonsoft.Json;
+using VSystem.Internal.Constants;
+using VSystem.Internal.Dependencies;
+using VSystem.Internal.Server_API_Executors;
+using VSystem.Internal.Server.Configuration;
+using VSystem.Internal.Server.HandleModules.Clients.Interfaces;
+using VSystem.Internal.Server.HandleModules.Messages.Interfaces;
+using VSystem.Internal.Server.ServerDataBases;
+
 namespace VSystem.Internal.Server.HandleModules.Messages;
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8604 // Possible null reference argument.
 
-public class ServerMessageProcessor
+public class ServerMessageProcessor : IServerMessageProcessor
 {
-    private readonly IClientManager _clientManager;
+    private readonly IClientsHandler _clientsHandler;
     private readonly ServerNetworkSettings _serverNetworkSettings;
-    private readonly ApiExecutorsContainer _apiExecutorsContainer;
-    private readonly ILoggingMiddleware _loggingMiddleware;
+    private readonly ServerApiExecutorsBridge _serverApiExecutorsBridge;
 
-    public MessageProcessor(
-        IClientManager clientManager,
-        ServerNetworkSettings serverNetworkSettings,
-        ApiExecutorsContainer apiExecutorsContainer,
-        ILoggingMiddleware loggingMiddleware)
+    public ServerMessageProcessor()
     {
-        _clientManager = clientManager;
-        _serverNetworkSettings = serverNetworkSettings;
-        _apiExecutorsContainer = apiExecutorsContainer;
-        _loggingMiddleware = loggingMiddleware;
+        AppDependencies.Provider
+            .Get(out _clientsHandler)
+            .Get(out _serverNetworkSettings)
+            .Get(out _serverApiExecutorsBridge);
     }
 
     public async Task ProcessMessageAsync(Socket clientSocket, string message)
     {
-        await _loggingMiddleware.LogMessageReceivedAsync(clientSocket, message);
-        
         RequestBase clientCommandRequest;
 
         try
@@ -37,57 +41,35 @@ public class ServerMessageProcessor
             clientCommandRequest = null;
         }
         
-        ValidationResult validationResult = CommandValidator.CommandValidator.ValidateCommand(clientCommandRequest);
-        
-        if (validationResult.IsValid == false)
-        {
-            await HandleClientFallback(clientSocket, new BadGateway(
-                errorMessage: $"[{HttpStatusCode.BadGateway}] Invalid command: {validationResult.ErrorMessage}")
-            );
-            return;
-        }
-
         try
         {
             string api = clientCommandRequest?.RequestApi ?? string.Empty;
-            
-            if (_apiExecutorsContainer.TryGetExecutor(api, out CommandExecutor targetExecutor) == false)
+
+            if (_serverApiExecutorsBridge.TryGetExecutor(api, out ServerApiExecutor executor) == false)
             {
-                await HandleClientFallback(clientSocket, new BadGateway(
-                    errorMessage: $"[{HttpStatusCode.BadGateway}] Not found Executor for API: [{api}]")
-                );
+                await _clientsHandler.SendMessageToClientAsync(
+                    clientSocket: clientSocket, 
+                    responseJson: string.Format(format: AppConstants.Server.NotFoundExecutorForRequestErrorMessage,
+                        arg0: HttpStatusCode.BadGateway,
+                        arg1: api));
+                
                 return;
             }
             
-            string responseJson = await targetExecutor.Execute(new ExecutorPayload()
-            {
-                CommandArgs = clientCommandRequest?.RequestArgs,
-                FeedbackCallback = (feedback) => _ = HandleClientFeedback(clientSocket, feedback),
-            });
+            string responseJson = await executor.Execute(clientCommandRequest);
             
-            await HandleClientFeedback(clientSocket, responseJson);
+            await _clientsHandler.SendMessageToClientAsync(
+                clientSocket: clientSocket, 
+                responseJson: responseJson);
         }
         catch (Exception ex)
         {
-            await HandleClientFallback(clientSocket, new InternalServerError(
-                errorMessage: $"[{HttpStatusCode.InternalServerError}] Error processing message '{message}': {ex.Message}")
-            );
+            await _clientsHandler.SendMessageToClientAsync(
+                clientSocket: clientSocket, 
+                responseJson: string.Format(format: AppConstants.Server.FailedExecutingToClientResponseMessage,
+                    arg0: HttpStatusCode.InternalServerError,
+                    arg1: message,
+                    arg2: ex.Message));
         }
-    }
-    
-    private async Task HandleClientFeedback(Socket clientSocket, string responseJson)
-    {
-        await _clientManager.SendMessageToClientAsync(clientSocket, responseJson);
-    }
-
-    private async Task HandleClientFeedback(Socket clientSocket, ResponseBase responseBase)
-    {
-        await _clientManager.SendMessageToClientAsync(clientSocket, responseBase);
-    }
-    
-    private async Task HandleClientFallback(Socket clientSocket, ResponseBase responseBaseMessage)
-    {
-        await _clientManager.SendMessageToClientAsync(clientSocket, responseBaseMessage);
-        await _loggingMiddleware.LogErrorAsync(clientSocket, responseBaseMessage.ErrorMessage);
     }
 }

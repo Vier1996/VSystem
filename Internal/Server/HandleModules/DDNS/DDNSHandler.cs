@@ -1,15 +1,31 @@
+using System.Net.Http.Headers;
+using System.Text;
+using VSystem.Internal.Constants;
+using VSystem.Internal.Dependencies;
+using VSystem.Internal.Logging;
+using static System.GC;
+
 namespace VSystem.Internal.Server.HandleModules.DDNS;
 
-public class DDNSHandler
+public class DDNSHandler : IDDNSHandler
 {
     private readonly DDNSSettings _ddnsSettings;
     private readonly HttpClient _httpClient;
-    private bool _disposed = false;
-
-    public DDNSService(DDNSSettings ddnsSettings)
+    private readonly ILoggingService _loggingService;
+    
+    public DDNSHandler()
     {
-        _ddnsSettings = ddnsSettings;
         _httpClient = new HttpClient();
+
+        AppDependencies.Provider
+            .Get(out _loggingService)
+            .Get(out _ddnsSettings);
+    }
+    
+    public void Dispose()
+    {
+        _httpClient?.Dispose();
+        SuppressFinalize(this);
     }
 
     public async Task<string> GetExternalIpAsync()
@@ -22,7 +38,10 @@ public class DDNSHandler
         }
         catch (Exception ex)
         {
-            this.LogError($"Failed to get external IP: {ex.Message}");
+            _loggingService.LogError(message: string.Format(
+                format: AppConstants.DDNS.ExternalIpGettingErrorMessage,
+                arg0: ex.Message));
+
             return string.Empty;
         }
     }
@@ -36,18 +55,23 @@ public class DDNSHandler
                 return;
 
             string url = $"https://dynupdate.no-ip.com/nic/update?hostname={_ddnsSettings.Hostname}&myip={externalIp}";
-            
-            var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_ddnsSettings.Username}:{_ddnsSettings.Password}"));
+            byte[] bytes = Encoding.UTF8.GetBytes($"{_ddnsSettings.Username}:{_ddnsSettings.Password}");
+            string authValue = Convert.ToBase64String(bytes);
+          
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
             
-            var response = await _httpClient.GetAsync(url);
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
             string result = await response.Content.ReadAsStringAsync();
-            
-            this.LogMessage($"New DDNS: {result}");
+         
+            _loggingService.LogMessage(
+                message: string.Format(AppConstants.DDNS.NewDDNSMessage, result), 
+                sender: this);
         }
         catch (Exception ex)
         {
-            this.LogError($"Failed to update DDNS: {ex.Message}");
+            _loggingService.LogMessage(
+                message: string.Format(AppConstants.DDNS.FailedUpdateDDNSErrorMessage, ex.Message), 
+                sender: this);
         }
     }
 
@@ -57,21 +81,6 @@ public class DDNSHandler
         {
             await UpdateDDNSAsync();
             await Task.Delay(TimeSpan.FromMinutes(_ddnsSettings.UpdateIntervalMinutes), cancellationToken);
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed && disposing)
-        {
-            _httpClient?.Dispose();
-            _disposed = true;
         }
     }
 }
