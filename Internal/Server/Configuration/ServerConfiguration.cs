@@ -2,6 +2,7 @@
 
 namespace VSystem.Internal.Server.Configuration;
 
+[Serializable]
 public record ServerConfiguration
 {
     public ServerNetworkSettings Server { get; init; }

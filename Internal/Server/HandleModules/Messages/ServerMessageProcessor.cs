@@ -30,46 +30,51 @@ public class ServerMessageProcessor : IServerMessageProcessor
 
     public async Task ProcessMessageAsync(Socket clientSocket, string message)
     {
-        RequestBase clientCommandRequest;
-
+        RequestDTO clientCommandRequest;
+        ServerApiExecutor executor = null;
+        
         try
         {
-            clientCommandRequest = JsonConvert.DeserializeObject<RequestBase>(message);
+            clientCommandRequest = JsonConvert.DeserializeObject<RequestDTO>(message);
         }
         catch (Exception e)
         {
             clientCommandRequest = null;
         }
-        
+
         try
         {
             string api = clientCommandRequest?.RequestApi ?? string.Empty;
 
-            if (_serverApiExecutorsBridge.TryGetExecutor(api, out ServerApiExecutor executor) == false)
+            if (_serverApiExecutorsBridge.TryGetExecutor(api, out executor) == false)
             {
                 await _clientsHandler.SendMessageToClientAsync(
-                    clientSocket: clientSocket, 
+                    clientSocket: clientSocket,
                     responseJson: string.Format(format: AppConstants.Server.NotFoundExecutorForRequestErrorMessage,
                         arg0: HttpStatusCode.BadGateway,
                         arg1: api));
-                
+
                 return;
             }
-            
+
             string responseJson = await executor.Execute(clientCommandRequest);
             
             await _clientsHandler.SendMessageToClientAsync(
-                clientSocket: clientSocket, 
+                clientSocket: clientSocket,
                 responseJson: responseJson);
         }
         catch (Exception ex)
         {
             await _clientsHandler.SendMessageToClientAsync(
-                clientSocket: clientSocket, 
+                clientSocket: clientSocket,
                 responseJson: string.Format(format: AppConstants.Server.FailedExecutingToClientResponseMessage,
                     arg0: HttpStatusCode.InternalServerError,
                     arg1: message,
                     arg2: ex.Message));
+        }
+        finally
+        {
+            executor?.Dispose();
         }
     }
 }

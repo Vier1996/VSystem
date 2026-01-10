@@ -9,6 +9,7 @@ public class ServerApiExecutorsBridge
     private readonly Dictionary<string, Type> _executors = new()
     {
         { AppConstants.ServerAPI.ServerTime, typeof(ServerGettingTimeExecutor) },
+        { AppConstants.ServerAPI.ServerPing, typeof(ServerGettingPingExecutor) },
     };
         
     public bool TryGetExecutor(string api, out ServerApiExecutor executor)

@@ -14,8 +14,8 @@ public class AppConstants
     
     public static class Path
     {
-        public const string ProjectPathPostfix = "bin/Debug/net9.0";
-        public const string ServerResourcesPath = @"ServerResources";
+        public const string ProjectRedundantPathPostfix = @"bin\Debug\net9.0";
+        public const string ServerResourcesPath = @"External\ServerResources";
     }
     
     public static class Credential
@@ -62,8 +62,17 @@ public class AppConstants
         public const string FailedToHandleClientErrorMessage = "Client {0} error: {1}";
     }
     
+    public static class Bootstrapper
+    {
+        public const string NoCredentialsErrorMessage = "[CRITICAL] No credentials found.";
+        public const string CredentialsEmptyDataErrorMessage = "[CRITICAL] Credentials data is empty.";
+        public const string NotFoundServerSettingErrorMessage = "[CRITICAL] Server setting is empty.";
+        public const string NotFoundDDNSSettingErrorMessage = "[CRITICAL] DDNS setting is empty.";
+    }
+    
     public static class ServerAPI
     {
         public const string ServerTime = "Server/Time"; // получение времени на сервере (тест)
+        public const string ServerPing = "Server/Ping"; // пропинговочка
     }
 }

@@ -27,9 +27,7 @@ public class DependenciesManager : IDependenciesRegistrator, IDependenciesProvid
                 format: AppConstants.Dependencies.AlreadyRegisterDependencyWarningMessage,
                 arg0: type.FullName);
             
-            Get<ILoggingService>()?.LogWarning(
-                message: warningMessage,
-                sender: this);
+            Console.WriteLine($"[DependencyManager] (WARNING) | {warningMessage}");
         }
 
         return this;
@@ -47,9 +45,7 @@ public class DependenciesManager : IDependenciesRegistrator, IDependenciesProvid
                 format: AppConstants.Dependencies.AlreadyRegisterDependencyWarningMessage,
                 arg0: type.FullName);
             
-            Get<ILoggingService>()?.LogWarning(
-                message: warningMessage,
-                sender: this);
+            Console.WriteLine($"[DependencyManager] (WARNING) | {warningMessage}");
         }
         
         return this;
@@ -65,9 +61,7 @@ public class DependenciesManager : IDependenciesRegistrator, IDependenciesProvid
                 format: AppConstants.Dependencies.NotFoundDependencyErrorMessage,
                 arg0: type.FullName);
             
-            Get<ILoggingService>()?.LogWarning(
-                message: warningMessage,
-                sender: this);
+            Console.WriteLine($"[DependencyManager] (ERROR) | {warningMessage}");
         }
             
         return service as T;
@@ -84,9 +78,7 @@ public class DependenciesManager : IDependenciesRegistrator, IDependenciesProvid
                 format: AppConstants.Dependencies.NotFoundDependencyErrorMessage,
                 arg0: type.FullName);
             
-            Get<ILoggingService>()?.LogWarning(
-                message: warningMessage,
-                sender: this);
+            Console.WriteLine($"[DependencyManager] (ERROR) | {warningMessage}");
             
             return this;
         }
@@ -107,9 +99,7 @@ public class DependenciesManager : IDependenciesRegistrator, IDependenciesProvid
                 format: AppConstants.Dependencies.NotFoundDependencyErrorMessage,
                 arg0: type.FullName);
             
-            Get<ILoggingService>()?.LogWarning(
-                message: warningMessage,
-                sender: this);
+            Console.WriteLine($"[DependencyManager] (ERROR) | {warningMessage}");
             
             return false;
         }

@@ -30,11 +30,9 @@ public class DDNSHandler : IDDNSHandler
 
     public async Task<string> GetExternalIpAsync()
     {
-        return _ddnsSettings.ContentAddress;
-        
         try
         {
-            return await _httpClient.GetStringAsync("https://api.ipify.org");
+            return await _httpClient.GetStringAsync(_ddnsSettings.WebIpHost);
         }
         catch (Exception ex)
         {
@@ -51,10 +49,11 @@ public class DDNSHandler : IDDNSHandler
         try
         {
             string externalIp = await GetExternalIpAsync();
+            
             if (string.IsNullOrEmpty(externalIp))
                 return;
-
-            string url = $"https://dynupdate.no-ip.com/nic/update?hostname={_ddnsSettings.Hostname}&myip={externalIp}";
+            
+            string url = string.Format(format: _ddnsSettings.Hostname, arg0: externalIp);
             byte[] bytes = Encoding.UTF8.GetBytes($"{_ddnsSettings.Username}:{_ddnsSettings.Password}");
             string authValue = Convert.ToBase64String(bytes);
           

@@ -3,8 +3,8 @@
 namespace VSystem.Internal.Server.ServerDataBases;
 
 [System.Serializable]
-public abstract record ResponseBase
+public record ResponseDTO
 {
     public HttpStatusCode StatusCode { get; init; } = HttpStatusCode.Processing;
-    public string ErrorMessage { get; init; } = string.Empty;
+    public string Message { get; init; } = string.Empty; 
 }

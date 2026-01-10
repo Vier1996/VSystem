@@ -1,5 +1,6 @@
 ﻿namespace VSystem.Internal.Server.Configuration;
 
+[Serializable]
 public record ServerNetworkSettings
 {
     public int Port { get; init; }

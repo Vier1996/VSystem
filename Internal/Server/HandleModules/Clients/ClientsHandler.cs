@@ -127,7 +127,7 @@ public class ClientsHandler : IClientsHandler
         } 
     }
 
-    public async Task SendMessageToClientAsync(Socket clientSocket, ResponseBase response)
+    public async Task SendMessageToClientAsync(Socket clientSocket, ResponseDTO response)
     {
         try
         {

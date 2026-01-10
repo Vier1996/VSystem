@@ -53,8 +53,8 @@ public class SystemServer : ISystemServer
         
         try
         {
-            await InitializeServerAsync();
             await StartDDNSUpdatesAsync();
+            await InitializeServerAsync();
             
             _ = Task.Run(AcceptClientsAsync);
         }

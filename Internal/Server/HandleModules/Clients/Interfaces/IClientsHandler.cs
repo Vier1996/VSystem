@@ -11,6 +11,6 @@ public interface IClientsHandler
     public Task RemoveClientAsync(Socket clientSocket);
     public Task BroadcastMessageAsync(string message);
     public Task SendMessageToClientAsync(Socket clientSocket, string responseJson);
-    public Task SendMessageToClientAsync(Socket clientSocket, ResponseBase response);
+    public Task SendMessageToClientAsync(Socket clientSocket, ResponseDTO response);
     public void DisconnectAll();
 }

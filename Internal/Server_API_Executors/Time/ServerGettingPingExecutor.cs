@@ -1,22 +1,19 @@
-﻿using System.Net;
+using System.Net;
 using Newtonsoft.Json;
-using VSystem.Internal.Server_API.ServerTime.Responses;
+using VSystem.Internal.Server_API.Ping.Responses;
 using VSystem.Internal.Server.ServerDataBases;
 
 namespace VSystem.Internal.Server_API_Executors.Time;
 
-public class ServerGettingTimeExecutor : ServerApiExecutor
+public class ServerGettingPingExecutor : ServerApiExecutor
 {
     public override void Dispose() { }
 
     public override Task<string> Execute(RequestDTO request)
     {
-        DateTime serverTime = DateTime.Now;
-        GetServerTimeResponseData responseData = new GetServerTimeResponseData()
+        GetServerPingResponseData responseData = new GetServerPingResponseData()
         {
-            Hour = serverTime.Hour,
-            Minutes = serverTime.Minute,
-            Seconds = serverTime.Second,
+            PingValue = 1
         };
         
         ResponseDTO responseDto = new ResponseDTO()
