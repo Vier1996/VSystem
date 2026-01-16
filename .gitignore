@@ -44,5 +44,4 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-/V_Server/Credentials.json
-/V_Server/ServerResources/
+/External/ServerResources/
