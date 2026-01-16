@@ -32,7 +32,8 @@ public class DDNSHandler : IDDNSHandler
     {
         try
         {
-            return await _httpClient.GetStringAsync(_ddnsSettings.WebIpHost);
+            //return await _httpClient.GetStringAsync(_ddnsSettings.WebIpHost);
+            return _ddnsSettings.ContentAddress;
         }
         catch (Exception ex)
         {

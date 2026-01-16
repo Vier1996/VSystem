@@ -41,11 +41,7 @@ public class PuppetClient : IDisposable
     {
         List<string> hosts = new()
         {
-            "127.0.0.1", // local host
-            //"192.168.0.199", // internal server ip
-            //"94.77.147.247", // external server ip (no vpn)
-            "5.180.52.29", // external server ip
-            //"vserversystem.ddns.net", // ddns host
+            "vserversystem.ddns.net",
         };
         
         foreach (string host in hosts)
