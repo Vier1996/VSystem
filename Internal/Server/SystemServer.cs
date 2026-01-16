@@ -97,6 +97,15 @@ public class SystemServer : ISystemServer
         IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Any, _serverNetworkSettings.Port);
         
         _serverSocket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        
+        _serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+        _serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+    
+        if (ipEndPoint.AddressFamily == AddressFamily.InterNetworkV6)
+        {
+            _serverSocket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
+        }
+    
         _serverSocket.Bind(ipEndPoint);
         _serverSocket.Listen(_serverNetworkSettings.MaxConnections);
         
@@ -107,7 +116,7 @@ public class SystemServer : ISystemServer
         _loggingService.LogMessage(
             message: string.Format(
                 format: AppConstants.Server.SuccessStartingServerMessage,
-                arg0: externalIp),
+                arg0: $"{externalIp}:{_serverNetworkSettings.Port}"),
             sender: this);
     }
 

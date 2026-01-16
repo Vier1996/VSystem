@@ -41,9 +41,11 @@ public class PuppetClient : IDisposable
     {
         List<string> hosts = new()
         {
-            "localhost",
-            "94.77.147.247",
-            "vserversystem.ddns.net",
+            "127.0.0.1", // local host
+            //"192.168.0.199", // internal server ip
+            //"94.77.147.247", // external server ip (no vpn)
+            "5.180.52.29", // external server ip
+            //"vserversystem.ddns.net", // ddns host
         };
         
         foreach (string host in hosts)
@@ -55,8 +57,9 @@ public class PuppetClient : IDisposable
             try
             {
                 using var client = new TcpClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
                 
-                await client.ConnectAsync(host, _serverNetworkSettings.Port);
+                await client.ConnectAsync(host, _serverNetworkSettings.Port/*, cts.Token*/);
                 
                 _loggingService.LogMessage(
                     message: $"✅ {host}:{_serverNetworkSettings.Port} - Подключение успешно!",
@@ -72,6 +75,12 @@ public class PuppetClient : IDisposable
                 
                 await Task.Delay(TimeSpan.FromSeconds(1));
             }
+            catch (SocketException se)
+            {
+                _loggingService.LogError(
+                    message: $"❌ Socket ошибка {host}:{_serverNetworkSettings.Port} - Код: {se.SocketErrorCode}, Сообщение: {se.Message}",
+                    sender: this);
+            }
             catch (Exception ex)
             {
                 _loggingService.LogError(
@@ -85,15 +94,20 @@ public class PuppetClient : IDisposable
     {
         try
         {
-            string json = JsonSerializer.Serialize(_testablePingRequest);
+            string json = JsonConvert.SerializeObject(_testablePingRequest);
             byte[] data = Encoding.UTF8.GetBytes(json);
 
             NetworkStream stream = client.GetStream();
-            await stream.WriteAsync(data, 0, data.Length);
+            //stream.ReadTimeout = 5000;
+            //stream.WriteTimeout = 5000;
+            
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            
+            await stream.WriteAsync(data, 0, data.Length, cts.Token);
 
             byte[] buffer = new byte[2048];
-            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-            string responseData = Encoding.UTF8.GetString(buffer);
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
+            string responseData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
             
             ResponseDTO responseDto = JsonConvert.DeserializeObject<ResponseDTO>(responseData, settings: new JsonSerializerSettings()
             {

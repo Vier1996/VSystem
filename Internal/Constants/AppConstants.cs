@@ -56,7 +56,7 @@ public class AppConstants
         public const string NotFoundExecutorForRequestErrorMessage = "[{0}] Not found Executor for API: [{1}]";
         public const string FailedExecutingToClientResponseMessage = "[{0}] Error processing message '{1}': by {2}";
         
-        public const string SuccessStartingServerMessage = "Server started with IP: {0}";
+        public const string SuccessStartingServerMessage = "Server started with address: {0}";
         public const string FailedToStartServerErrorMessage = "Failed to start server: {0}";
         public const string FailedToAcceptClientErrorMessage = "Error accepting client: {0}";
         public const string FailedToHandleClientErrorMessage = "Client {0} error: {1}";
