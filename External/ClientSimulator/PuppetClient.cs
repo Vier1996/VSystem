@@ -1,14 +1,8 @@
 ﻿using System.Net.Sockets;
-using System.Text;
-using Newtonsoft.Json;
-using VSystem.Internal.Constants;
+using VSystem.External.ClientSimulator.ClientLogic;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
-using VSystem.Internal.ServerInfrastructure.Server_API.DataModels;
-using VSystem.Internal.ServerInfrastructure.Server_API.Ping;
 using VSystem.Internal.ServerInfrastructure.Server.Configuration;
-using VSystem.Internal.ServerInfrastructure.Server.ServerDataBases;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace VSystem.External.ClientSimulator;
 
@@ -16,24 +10,9 @@ public class PuppetClient : IDisposable
 {
     private readonly ILoggingService _loggingService;
     private readonly ServerNetworkSettings _serverNetworkSettings;
-
-    private readonly RequestDTO _testablePingRequest;
-    private readonly RequestDTO _testableDataModifyRequest;
     
     public PuppetClient()
     {
-        _testablePingRequest = new RequestDTO()
-        {
-            RequestApi = AppConstants.ServerAPI.ServerPing,
-            RequestArgs = string.Empty,
-        };
-        
-        _testableDataModifyRequest = new RequestDTO()
-        {
-            RequestApi = AppConstants.ServerAPI.DataModelTestModify,
-            RequestArgs = string.Empty,
-        };
-        
         AppDependencies.Provider
             .Get(out _loggingService)
             .Get(out _serverNetworkSettings)
@@ -67,18 +46,10 @@ public class PuppetClient : IDisposable
                 await client.ConnectAsync(host, _serverNetworkSettings.Port/*, cts.Token*/);
                 
                 _loggingService.LogMessage(message: $"✅ {host}:{_serverNetworkSettings.Port} - Подключение успешно!", sender: this);
-
-                string pingResponse = await SendPingRequest(client);
-
-                _loggingService.LogMessage(
-                    message: $"✅ ответ получен пинг [{pingResponse}]",
-                    sender: this);
                 
-                string dataModifyResponse = await SendTestdataModelModifyRequest(client);
-
-                _loggingService.LogMessage(
-                    message: $"✅ ответ получен новое значение модели [{dataModifyResponse}]",
-                    sender: this);
+                string response = await RunRequestLogic(client);
+                
+                _loggingService.LogMessage(message: $"✅ Ответ: [{response}]", sender: this);
                 
                 client.Close();
                 
@@ -98,84 +69,25 @@ public class PuppetClient : IDisposable
             }
         }
     }
-    
-    private async Task<string> SendPingRequest(TcpClient client)
+
+    public async Task<string> RunRequestLogic(TcpClient client)
     {
+        IClientLogicVariant logic = new ClientGetPingLogic();
+        string response;
+
         try
         {
-            string json = JsonConvert.SerializeObject(_testablePingRequest);
-            byte[] data = Encoding.UTF8.GetBytes(json);
-
-            NetworkStream stream = client.GetStream();
-            //stream.ReadTimeout = 5000;
-            //stream.WriteTimeout = 5000;
-            
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            
-            await stream.WriteAsync(data, 0, data.Length, cts.Token);
-
-            byte[] buffer = new byte[2048];
-            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
-            string responseData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            
-            ResponseDTO responseDto = JsonConvert.DeserializeObject<ResponseDTO>(responseData, settings: new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented,
-            })!;
-            
-            GetServerPingResponseData responsePingData = JsonConvert.DeserializeObject<GetServerPingResponseData>(responseDto.Message, settings: new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented,
-            })!;
-            
-            return responsePingData.PingValue.ToString();
+            response = await logic.Run(client);
         }
         catch (Exception ex)
         {
+            response = string.Empty;
+                    
             _loggingService.LogError(
                 message: $"❌ Ошибка при отправке запроса: {ex.Message}",
                 sender: this);
         }
         
-        return string.Empty;
-    }
-    
-    private async Task<string> SendTestdataModelModifyRequest(TcpClient client)
-    {
-        try
-        {
-            string json = JsonConvert.SerializeObject(_testableDataModifyRequest);
-            byte[] data = Encoding.UTF8.GetBytes(json);
-
-            NetworkStream stream = client.GetStream();
-            
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            
-            await stream.WriteAsync(data, 0, data.Length, cts.Token);
-
-            byte[] buffer = new byte[2048];
-            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
-            string responseData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            
-            ResponseDTO responseDto = JsonConvert.DeserializeObject<ResponseDTO>(responseData, settings: new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented,
-            })!;
-            
-            ModifyServerTestModelResponseData responsePingData = JsonConvert.DeserializeObject<ModifyServerTestModelResponseData>(responseDto.Message, settings: new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented,
-            })!;
-            
-            return responsePingData.NewValue.ToString();
-        }
-        catch (Exception ex)
-        {
-            _loggingService.LogError(
-                message: $"❌ Ошибка при отправке запроса: {ex.Message}",
-                sender: this);
-        }
-        
-        return string.Empty;
+        return response;
     }
 }
