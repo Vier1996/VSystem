@@ -1,22 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using V_Server.ServerExternal.Services.Data.API.Model.Server;
-using V_Server.ServerExternal.Services.Data.API.Model.User;
+using VSystem.Internal.Services.Data.API.Interfaces;
+using VSystem.Internal.Services.Data.API.Model.Server;
+using VSystem.Internal.Services.Data.API.Model.User;
 
-namespace V_Server.ServerExternal.Services.Data.API.Container;
-
-public interface IDataModelContainer
-{
-    public IReadOnlyDictionary<Type, ServerDataModel> ServerDataModels { get; }
-    
-    public TModel ResolveServerData<TModel>() where TModel : ServerDataModel;
-    public TModel ResolveUserData<TModel>(string userToken) where TModel : UserDataModel;
-    public bool TryResolveUserData<TModel>(string userToken, out TModel model) where TModel : UserDataModel;
-    
-    public bool HasUserEntry(string userToken);
-    public void AddUserEntry(string userToken);
-    public bool IsUserDataLoaded(string userToken);
-    public void SetUserDataModels(string userToken, Dictionary<Type, UserDataModel> models);
-}
+namespace VSystem.Internal.Services.Data.API.Container;
 
 public class DataModelContainer : IDataModelContainer
 {

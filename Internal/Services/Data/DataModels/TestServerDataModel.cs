@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using V_Server.ServerExternal.Services.Data.API.Model.Server;
+using VSystem.Internal.Services.Data.API.Model.Server;
 
-namespace V_Server.ServerExternal.Services.Data.DataModels;
+namespace VSystem.Internal.Services.Data.DataModels;
 
 public class TestServerDataModel : ServerDataModel
 {

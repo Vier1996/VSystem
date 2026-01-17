@@ -27,9 +27,16 @@ public class AppConstants
     
     public static class Data
     {
-        public const string ServerModelLocalPath = "Data/ServerModels";
-        public const string UserModelLocalPath = "Data/UserModels";
-        public const string Extension = ".visd";
+        public const int AutoSaveModelsDataDelay = 60;
+        
+        public const string RootDataFolderPath =  @"C:/ServerData";
+        public const string RootDataModelsPath =  @$"{RootDataFolderPath}/DataModels";
+        public const string RootDataMediaPath =  @$"{RootDataFolderPath}/MediaData";
+        public const string RootServerDataModelsPath =  @$"{RootDataModelsPath}/ServerDataModels";
+        public const string RootUserDataModelsPath =  @$"{RootDataModelsPath}/UserDataModels";
+        public const string ModelsDataExtension = ".visd";
+        
+        public const string FailureDataModelSavingMessage = "Saving model [{0}] at path [{1}] finished with Exception by: {2}";
     }
 
     public static class DDNS
@@ -74,5 +81,6 @@ public class AppConstants
     {
         public const string ServerTime = "Server/Time"; // получение времени на сервере (тест)
         public const string ServerPing = "Server/Ping"; // пропинговочка
+        public const string DataModelTestModify = "Data/Model/ModifyTestModel"; // тестовое модифицирование модели
     }
 }

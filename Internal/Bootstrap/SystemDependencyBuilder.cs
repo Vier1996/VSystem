@@ -1,15 +1,19 @@
 ﻿using Newtonsoft.Json;
+using VSystem.Internal.Assembly;
 using VSystem.Internal.Constants;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Environment;
 using VSystem.Internal.Logging;
-using VSystem.Internal.Server;
-using VSystem.Internal.Server.Configuration;
-using VSystem.Internal.Server.HandleModules.Clients;
-using VSystem.Internal.Server.HandleModules.Clients.Interfaces;
-using VSystem.Internal.Server.HandleModules.DDNS;
-using VSystem.Internal.Server.HandleModules.Messages;
-using VSystem.Internal.Server.HandleModules.Messages.Interfaces;
+using VSystem.Internal.ServerInfrastructure.Server;
+using VSystem.Internal.ServerInfrastructure.Server.Configuration;
+using VSystem.Internal.ServerInfrastructure.Server.HandleModules.Clients;
+using VSystem.Internal.ServerInfrastructure.Server.HandleModules.Clients.Interfaces;
+using VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS;
+using VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS.Interfaces;
+using VSystem.Internal.ServerInfrastructure.Server.HandleModules.Messages;
+using VSystem.Internal.ServerInfrastructure.Server.HandleModules.Messages.Interfaces;
+using VSystem.Internal.Services.Data.API;
+using VSystem.Internal.Services.Data.API.Modules;
 
 namespace VSystem.Internal.Bootstrap;
 
@@ -22,11 +26,28 @@ public class SystemDependencyBuilder : IDisposable
 
     public Task ResolveDependencies()
     {
+        AppDependencies.Registrator
+            .Register(new AssemblyManager())
+            .Register(typeof(ILoggingService), new LoggingService());
+        
         ServerConfiguration serverConfiguration = GetServerConfiguration();
+        
         AppDependencies.Registrator
             .Register(serverConfiguration.Server)
             .Register(serverConfiguration.DDNS)
-            .Register(typeof(ILoggingService), new LoggingService())
+            
+            .Register(typeof(IDataService), new DataService(new DataServiceInitializeArgs()
+            {
+                AutoSaveDelay = AppConstants.Data.AutoSaveModelsDataDelay,
+                
+                PathInitializeArgs = new DataPathManager.DataPathInitializeArgs()
+                {
+                    ServerModelDirectoryPath = AppConstants.Data.RootServerDataModelsPath,
+                    UserModelDirectoryPath = AppConstants.Data.RootUserDataModelsPath,
+                    DataExtension = AppConstants.Data.ModelsDataExtension,
+                }
+            }))
+            
             .Register(new ServerApiExecutorsBridge())
             .Register(typeof(IClientsHandler), new ClientsHandler())
             .Register(typeof(IDDNSHandler), new DDNSHandler())

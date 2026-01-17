@@ -1,4 +1,4 @@
-﻿namespace V_Server.ServerExternal.Services.ClientToken;
+﻿namespace VSystem.Internal.Services.ClientToken;
 
 public class ClientTokenService
 {

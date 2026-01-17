@@ -4,12 +4,24 @@ namespace VSystem.Internal.Environment;
 
 public static class EnvironmentUtils
 {
-    public static string ProjectHeadDirectory { get; }
+    public static string ProjectHeadDirectory { get; private set; }
+    public static string ServerDataRootDirectory { get; private set; }
 
     static EnvironmentUtils()
     {
-        string baseDirectory = System.IO.Directory.GetCurrentDirectory();
-        
-        ProjectHeadDirectory = baseDirectory.Replace(AppConstants.Path.ProjectRedundantPathPostfix, string.Empty); 
+        SetupHeadEnvironmentDirectory();
+        SetupDatasEnvironmentDirectory();
+    }
+
+    private static void SetupHeadEnvironmentDirectory()
+    {
+        ProjectHeadDirectory = System.IO.Directory
+            .GetCurrentDirectory()
+            .Replace(AppConstants.Path.ProjectRedundantPathPostfix, string.Empty);
+    }
+
+    private static void SetupDatasEnvironmentDirectory()
+    {
+        ServerDataRootDirectory = AppConstants.Data.RootDataFolderPath;
     }
 }
