@@ -111,12 +111,12 @@ public class SystemServer : ISystemServer
         
         _isRunning = true;
         
-        string externalIp = await _ddnsHandler.GetExternalIpAsync();
+        string contentIp = _ddnsHandler.GetExternalIp();
         
         _loggingService.LogMessage(
             message: string.Format(
                 format: AppConstants.Server.SuccessStartingServerMessage,
-                arg0: $"{externalIp}:{_serverNetworkSettings.Port}"),
+                arg0: $"{contentIp}:{_serverNetworkSettings.Port}"),
             sender: this);
     }
 

@@ -14,8 +14,19 @@ public class AppConstants
     
     public static class Path
     {
-        public const string ProjectRedundantPathPostfix = @"bin\Debug\net9.0";
-        public const string ServerResourcesPath = @"External\ServerResources";
+        public const string ProjectRedundantPathPostfix = 
+#if WINDOWS
+            @"bin\Debug\net9.0";
+#elif MACOS
+            @"bin/Debug/net9.0";
+#endif
+        
+        public const string ServerResourcesPath = 
+#if WINDOWS
+            @"External\ServerResources";
+#elif MACOS
+            @"External/ServerResources";
+#endif
     }
     
     public static class Credential
@@ -27,8 +38,20 @@ public class AppConstants
     
     public static class Data
     {
-        public const string ServerModelLocalPath = "Data/ServerModels";
-        public const string UserModelLocalPath = "Data/UserModels";
+        public const string ServerModelLocalPath = 
+#if WINDOWS
+            @"Data\ServerModels";
+#elif MACOS
+            @"Data/ServerModels";
+#endif
+        
+        public const string UserModelLocalPath = 
+#if WINDOWS
+            @"Data\UserModels";
+#elif MACOS
+            @"Data/UserModels";
+#endif
+        
         public const string Extension = ".visd";
     }
 

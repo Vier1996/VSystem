@@ -3,6 +3,7 @@ using System.Text;
 using VSystem.Internal.Constants;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
+using VSystem.Internal.Network;
 using static System.GC;
 
 namespace VSystem.Internal.Server.HandleModules.DDNS;
@@ -28,12 +29,17 @@ public class DDNSHandler : IDDNSHandler
         SuppressFinalize(this);
     }
 
-    public async Task<string> GetExternalIpAsync()
+    public string GetExternalIp()
     {
+        string ip = string.Empty;
+        
         try
         {
-            //return await _httpClient.GetStringAsync(_ddnsSettings.WebIpHost);
-            return _ddnsSettings.ContentAddress;
+#if WINDOWS
+            ip = _ddnsSettings.ContentAddress;
+#elif MACOS
+            ip = NetworkUtility.GetLocalIpAddress();
+#endif
         }
         catch (Exception ex)
         {
@@ -43,13 +49,15 @@ public class DDNSHandler : IDDNSHandler
 
             return string.Empty;
         }
+
+        return ip;
     }
 
     public async Task UpdateDDNSAsync()
     {
         try
         {
-            string externalIp = await GetExternalIpAsync();
+            string externalIp = GetExternalIp();
             
             if (string.IsNullOrEmpty(externalIp))
                 return;
