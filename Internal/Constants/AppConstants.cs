@@ -98,7 +98,13 @@ public class AppConstants
         public const string NotFoundServerSettingErrorMessage = "[CRITICAL] Server setting is empty.";
         public const string NotFoundDDNSSettingErrorMessage = "[CRITICAL] DDNS setting is empty.";
     }
-    
+
+    public static class SecureToken
+    {
+        public const int CleanupInitialSecondsDelay = 0;
+        public const int CleanupIntervalCheckSeconds = 60;
+    }
+
     public static class ServerAPI
     {
         public const string ServerTime = "Server/Time"; // получение времени на сервере (тест)

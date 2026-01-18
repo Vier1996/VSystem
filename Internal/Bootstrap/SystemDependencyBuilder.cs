@@ -13,6 +13,7 @@ using VSystem.Internal.Services.Data;
 using VSystem.Internal.Services.Data.Interfaces;
 using VSystem.Internal.Services.Data.Modules;
 using VSystem.Internal.Services.Registration;
+using VSystem.Internal.Services.Token;
 
 namespace VSystem.Internal.Bootstrap;
 
@@ -53,6 +54,7 @@ public class SystemDependencyBuilder : IDisposable
             .Register(typeof(IServerMessageProcessor), new ServerMessageProcessor())
             
             .Register(typeof(IRegistrationService), new RegistrationService())
+            .Register(typeof(ISecureTokenService), new SecureTokenService())
             ;
         
         return Task.CompletedTask;

@@ -7,7 +7,7 @@ class Program
     private static CancellationTokenSource _cancellation; 
     
     public static async Task Main(string[] args)
-    {
+    { 
         _cancellation = new CancellationTokenSource();
 
         using SystemBootstrapper systemBootstrapper = new SystemBootstrapper(_cancellation);
