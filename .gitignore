@@ -45,3 +45,4 @@ TestResult.xml
 nunit-*.xml
 
 /External/ServerResources/
+/.idea/.idea.VSystem/.idea/AndroidProjectSystem.xml
