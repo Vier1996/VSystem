@@ -1,4 +1,4 @@
-﻿using VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS.Configuration;
+﻿using VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS;
 
 namespace VSystem.Internal.ServerInfrastructure.Server.Configuration;
 

@@ -32,8 +32,6 @@ public class AppConstants
     public static class Credential
     {
         public static readonly string FileName = "Credentials.json";
-        public static readonly string ServerDataName = "Server";
-        public const string DynamicDnsName = "DDNS";
     }
     
     public static class Data

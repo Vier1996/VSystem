@@ -1,4 +1,4 @@
-﻿namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS.Configuration;
+﻿namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS;
 
 [Serializable]
 public record DDNSSettings

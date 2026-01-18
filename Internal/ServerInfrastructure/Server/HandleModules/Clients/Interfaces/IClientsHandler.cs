@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using VSystem.Internal.ServerInfrastructure.Server.ServerDataBases;
 
-namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.Clients.Interfaces;
+namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.Clients;
 
 public interface IClientsHandler
 {

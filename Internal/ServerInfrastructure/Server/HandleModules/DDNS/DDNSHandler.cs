@@ -3,8 +3,6 @@ using System.Text;
 using VSystem.Internal.Constants;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
-using VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS.Configuration;
-using VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS.Interfaces;
 using VSystem.Internal.Network;
 using static System.GC;
 

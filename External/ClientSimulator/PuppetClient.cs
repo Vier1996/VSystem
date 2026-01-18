@@ -2,7 +2,7 @@
 using VSystem.External.ClientSimulator.ClientLogic;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
-using VSystem.Internal.ServerInfrastructure.Server.Configuration;
+using VSystem.Internal.ServerInfrastructure.Server;
 
 namespace VSystem.External.ClientSimulator;
 
@@ -28,7 +28,6 @@ public class PuppetClient : IDisposable
     {
         List<string> hosts = new()
         {
-            //"127.0.0.1",
             "vserversystem.ddns.net",
         };
         
@@ -70,7 +69,7 @@ public class PuppetClient : IDisposable
         }
     }
 
-    public async Task<string> RunRequestLogic(TcpClient client)
+    private async Task<string> RunRequestLogic(TcpClient client)
     {
         IClientLogicVariant logic = new ClientGetPingLogic();
         string response;

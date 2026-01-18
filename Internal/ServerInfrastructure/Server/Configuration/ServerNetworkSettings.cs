@@ -1,4 +1,4 @@
-﻿namespace VSystem.Internal.ServerInfrastructure.Server.Configuration;
+﻿namespace VSystem.Internal.ServerInfrastructure.Server;
 
 [Serializable]
 public record ServerNetworkSettings

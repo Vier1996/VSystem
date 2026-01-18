@@ -1,4 +1,4 @@
-﻿namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS.Interfaces;
+﻿namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS;
 
 public interface IDDNSHandler : IDisposable
 {

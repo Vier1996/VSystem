@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.Messages.Interfaces;
+namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.Messages;
 
 public interface IServerMessageProcessor
 {

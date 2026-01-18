@@ -5,7 +5,6 @@ using System.Text.Json;
 using VSystem.Internal.Constants;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
-using VSystem.Internal.ServerInfrastructure.Server.HandleModules.Clients.Interfaces;
 using VSystem.Internal.ServerInfrastructure.Server.ServerDataBases;
 
 namespace VSystem.Internal.ServerInfrastructure.Server.HandleModules.Clients;
