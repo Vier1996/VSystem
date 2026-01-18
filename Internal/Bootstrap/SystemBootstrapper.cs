@@ -1,5 +1,5 @@
 ﻿using VSystem.External.ClientSimulator;
-using VSystem.Internal.Server;
+using VSystem.Internal.ServerInfrastructure.Server;
 
 namespace VSystem.Internal.Bootstrap;
 
@@ -8,7 +8,7 @@ public class SystemBootstrapper : IDisposable
     private readonly SystemDependencyBuilder _systemDependencyBuilder;
     private readonly CancellationTokenSource _cancellation; 
 
-    private SystemServer _systemServer;
+    private ISystemServer _systemServer;
     private PuppetClient _puppetClient;
     
     public SystemBootstrapper(CancellationTokenSource cancellation)

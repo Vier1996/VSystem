@@ -1,6 +1,6 @@
-using V_Server.ServerExternal.Services.Data.API.Model.User;
+using VSystem.Internal.Services.Data.API.Model.User;
 
-namespace V_Server.ServerExternal.Services.Data.API.Container;
+namespace VSystem.Internal.Services.Data.API.Container;
 
 public class DataModelUserContainerEntry
 {

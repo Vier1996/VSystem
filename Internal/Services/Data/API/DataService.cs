@@ -1,62 +1,57 @@
-﻿using V_Server.ServerExternal.Services.Data.API.Container;
-using V_Server.ServerExternal.Services.Data.API.Model.Server;
-using V_Server.ServerExternal.Services.Data.API.Model.User;
-using V_Server.ServerExternal.Services.Data.API.Modules;
+﻿using VSystem.External.Extensions.UniRx;
+using VSystem.Internal.Assembly;
+using VSystem.Internal.Dependencies;
+using VSystem.Internal.Services.Data.API.Container;
+using VSystem.Internal.Services.Data.API.Interfaces;
+using VSystem.Internal.Services.Data.API.Model.Server;
+using VSystem.Internal.Services.Data.API.Model.User;
+using VSystem.Internal.Services.Data.API.Modules;
 
-namespace V_Server.ServerExternal.Services.Data.API;
-
-public interface IDataService : IDisposable
-{
-    public void SaveServerDataModels();
-    
-    public TModel ResolveServerData<TModel>() where TModel : ServerDataModel;
-    public TModel ResolveUserData<TModel>(string userToken) where TModel : UserDataModel;
-}
+namespace VSystem.Internal.Services.Data.API;
 
 public record DataServiceInitializeArgs
 {
-    public required DataTool.DataToolInitializeArgs ToolInitializeArgs { get; init; }
-    public required DataPath.DataPathInitializeArgs PathInitializeArgs { get; init; }
+    public int AutoSaveDelay { get; init; }
+    public required DataPathManager.DataPathInitializeArgs PathInitializeArgs { get; init; }
 }
 
 public class DataService : IDataService
 {
-    private readonly DataTool _tool;
-    private readonly IDataPath _path;
-    private readonly IDataCrypt _crypt;
-    private readonly IDataLoader _loader;
-    private readonly IDataSaver _saver;
-    private readonly IDataCleaner _cleaner;
+    private readonly AssemblyManager _assemblyManager;
+    
+    private readonly IDataPathManager _pathManager; 
+    private readonly IDataModelsManager _modelsManager; 
     private readonly IDataModelContainer _modelContainer;
     
     private readonly List<Type> _serverModelTypes;
     private readonly List<Type> _userModelTypes;
     
+    private readonly IDisposable _autoSaveDisposable;
+    
     public DataService(DataServiceInitializeArgs initializeArgs)
     {
-        _tool = new DataTool(initializeArgs.ToolInitializeArgs);
-        _path = new DataPath(initializeArgs.PathInitializeArgs);
-        _crypt = new DataCrypt();
-        _loader = new DataLoader(_path, _crypt);
-        _saver = new DataSaver(_path, _crypt);
-        _cleaner = new DataCleaner(_path);
+        AppDependencies.Provider.Get(out _assemblyManager);
         
-        _serverModelTypes = _tool.GetTypes<ServerModelAttribute, ServerDataModel>();
-        _userModelTypes = _tool.GetTypes<UserModelAttribute, UserDataModel>();
+        _pathManager = new DataPathManager(initializeArgs.PathInitializeArgs);
+        _modelsManager = new DataModelsManager(_pathManager);
+        
+        _serverModelTypes = _assemblyManager.GetTypes<ServerModelAttribute, ServerDataModel>();
+        _userModelTypes = _assemblyManager.GetTypes<UserModelAttribute, UserDataModel>();
         _modelContainer = new DataModelContainer(LoadServerDataModels());
+
+        _autoSaveDisposable = UniRxExtension.LoopedTimer(initializeArgs.AutoSaveDelay, initializeArgs.AutoSaveDelay, SaveAllDataModels);
     }
     
     public void Dispose()
     {
-        SaveServerDataModels();
+        _autoSaveDisposable?.Dispose();
+        
+        SaveAllDataModels();
     }
 
-    public void SaveServerDataModels()
+    public void SaveAllForce()
     {
-        foreach (KeyValuePair<Type, ServerDataModel> serverDataKvp in _modelContainer.ServerDataModels)
-        {
-            _saver.SaveModelInStorageForServer(serverDataKvp.Value);   
-        }
+        SaveAllDataModels();
     }
 
     public TModel ResolveServerData<TModel>() where TModel : ServerDataModel
@@ -97,7 +92,7 @@ public class DataService : IDataService
             if(modelType.ContainsGenericParameters || modelType.IsAbstract)
                 continue;
                 
-            (ServerDataModel, string) modelData = _loader.LoadDataModelJsonForServer<ServerDataModel>(modelType);
+            (ServerDataModel, string) modelData = _modelsManager.LoadServerDataModelFromStorage<ServerDataModel>(modelType);
                 
             modelData.Item1.SetSerializedData(modelData.Item2);
             
@@ -118,7 +113,7 @@ public class DataService : IDataService
             if(modelType.ContainsGenericParameters || modelType.IsAbstract)
                 continue;
                 
-            (UserDataModel, string) modelData = _loader.LoadDataModelJsonForUser<UserDataModel>(userToken, modelType);
+            (UserDataModel, string) modelData = _modelsManager.LoadUserDataModelFromStorage<UserDataModel>(userToken, modelType);
                 
             modelData.Item1.SetSerializedData(modelData.Item2);
             
@@ -126,5 +121,18 @@ public class DataService : IDataService
         }
 
         return models;
+    }
+
+    private void SaveAllDataModels()
+    {
+        SaveServerDataModels();
+    }
+    
+    private void SaveServerDataModels()
+    {
+        foreach (KeyValuePair<Type, ServerDataModel> serverDataKvp in _modelContainer.ServerDataModels)
+        {
+            _modelsManager.SaveServerDataModelInStorage(serverDataKvp.Value);   
+        }
     }
 }

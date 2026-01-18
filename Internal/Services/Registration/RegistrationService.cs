@@ -1,4 +1,4 @@
-﻿namespace V_Server.ServerExternal.Services.Registration;
+﻿namespace VSystem.Internal.Services.Registration;
 
 public class RegistrationService
 {

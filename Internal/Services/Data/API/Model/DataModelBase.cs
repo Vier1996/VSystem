@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace V_Server.ServerExternal.Services.Data.API.Model;
+namespace VSystem.Internal.Services.Data.API.Model;
 
 [Serializable]
 public abstract class DataModelBase
@@ -14,7 +14,7 @@ public abstract class DataModelBase
         _isDirty = false;
     }
 
-    public bool IsDirtyStatus() => _isDirty;
+    public bool InDirtyStatus() => _isDirty;
     public void MarkAsDirty() => _isDirty = true;
     public string GetCacheSerializedData() => _serializedData;
 }

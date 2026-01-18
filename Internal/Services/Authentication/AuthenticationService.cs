@@ -1,4 +1,4 @@
-﻿namespace V_Server.ServerExternal.Services.Authentication;
+﻿namespace VSystem.Internal.Services.Authentication;
 
 public class AuthenticationService
 {
