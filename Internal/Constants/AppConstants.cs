@@ -2,6 +2,23 @@ namespace VSystem.Internal.Constants;
 
 public class AppConstants
 {
+    public static class Platform
+    {
+        public const string CurrentPlatform = 
+#if WINDOWS
+            "Windows";
+#elif MACOS
+            "macOS";
+#endif
+        
+        public const string PathSeparator = 
+#if WINDOWS
+            "\";
+#elif MACOS
+            "/";
+#endif
+    }
+    
     public static class Assembly
     {
         public const string ServerAssemblyName = "VSystem";
@@ -14,19 +31,8 @@ public class AppConstants
     
     public static class Path
     {
-        public const string ProjectRedundantPathPostfix = 
-#if WINDOWS
-            @"bin\Debug\net9.0";
-#elif MACOS
-            @"bin/Debug/net9.0";
-#endif
-        
-        public const string ServerResourcesPath = 
-#if WINDOWS
-            @"External\ServerResources";
-#elif MACOS
-            @"External/ServerResources";
-#endif
+        public const string ProjectRedundantPathPostfix = $"bin{Platform.PathSeparator}Debug{Platform.PathSeparator}net9.0";
+        public const string ServerResourcesPath = $"External{Platform.PathSeparator}ServerResources";
     }
     
     public static class Credential
@@ -37,12 +43,19 @@ public class AppConstants
     public static class Data
     {
         public const int AutoSaveModelsDataDelay = 60;
+
+        public const string RootDataFolderName = "VServer";
+        public const string RootDataFolderPath =
+#if WINDOWS
+            $"C:/{RootDataFolderName}";
+#elif MACOS
+            $"/Applications{Platform.PathSeparator}{RootDataFolderName}";
+#endif
+        public const string RootDataModelsPath = $"{RootDataFolderPath}{Platform.PathSeparator}DataModels";
+        public const string RootDataMediaPath = $"{RootDataFolderPath}{Platform.PathSeparator}MediaData";
+        public const string RootServerDataModelsPath = $"{RootDataModelsPath}{Platform.PathSeparator}Server";
+        public const string RootUserDataModelsPath = $"{RootDataModelsPath}{Platform.PathSeparator}Users";
         
-        public const string RootDataFolderPath =  @"C:/ServerData";
-        public const string RootDataModelsPath =  @$"{RootDataFolderPath}/DataModels";
-        public const string RootDataMediaPath =  @$"{RootDataFolderPath}/MediaData";
-        public const string RootServerDataModelsPath =  @$"{RootDataModelsPath}/ServerDataModels";
-        public const string RootUserDataModelsPath =  @$"{RootDataModelsPath}/UserDataModels";
         public const string ModelsDataExtension = ".visd";
         
         public const string FailureDataModelSavingMessage = "Saving model [{0}] at path [{1}] finished with Exception by: {2}";

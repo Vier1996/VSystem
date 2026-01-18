@@ -1,4 +1,5 @@
-﻿using VSystem.Internal.Constants;
+﻿using System.Runtime.InteropServices;
+using VSystem.Internal.Constants;
 
 namespace VSystem.Internal.Environment;
 

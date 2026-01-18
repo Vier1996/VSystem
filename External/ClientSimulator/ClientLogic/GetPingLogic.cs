@@ -7,7 +7,7 @@ using VSystem.Internal.ServerInfrastructure.Server.ServerDataBases;
 
 namespace VSystem.External.ClientSimulator.ClientLogic;
 
-public class ClientGetPingLogic : IClientLogicVariant
+public class GetPingLogic : IClientLogicVariant
 {
     public async Task<string> Run(TcpClient client)
     {

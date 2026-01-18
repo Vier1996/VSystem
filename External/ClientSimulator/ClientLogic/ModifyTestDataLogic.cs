@@ -14,7 +14,7 @@ public class ModifyTestDataLogic : IClientLogicVariant
     {
         string json = JsonConvert.SerializeObject(new RequestDTO()
         {
-            RequestApi = AppConstants.ServerAPI.ServerPing,
+            RequestApi = AppConstants.ServerAPI.DataModelTestModify,
             RequestArgs = string.Empty,
         });
             

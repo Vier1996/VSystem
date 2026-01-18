@@ -73,9 +73,6 @@ public class DataModelsManager : IDataModelsManager
         try
         {
             File.WriteAllText(path, serializedData);
-            
-            //_loggingService.LogError($"Сохранено [{modelBase.GetType().Name}] из пути [{path}]", this);
-
         }
         catch (Exception ex)
         {
@@ -106,8 +103,6 @@ public class DataModelsManager : IDataModelsManager
                 data = string.Empty;
                 model = (TModel) Activator.CreateInstance(modelType)!;
             }
-                
-            //_loggingService.LogError($"Загружено [{modelType.GetType().Name}] из пути [{path}]", this);
             
             return (model, data);
         }
