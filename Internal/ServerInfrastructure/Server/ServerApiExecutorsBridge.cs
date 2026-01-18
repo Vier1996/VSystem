@@ -1,8 +1,8 @@
 ﻿using VSystem.Internal.Constants;
-using VSystem.Internal.ServerInfrastructure.Server_API_Executors;
-using VSystem.Internal.ServerInfrastructure.Server_API_Executors.DataModel;
-using VSystem.Internal.ServerInfrastructure.Server_API_Executors.Ping;
-using VSystem.Internal.ServerInfrastructure.Server_API_Executors.Time;
+using VSystem.Internal.ServerInfrastructure.ServerAPI;
+using VSystem.Internal.ServerInfrastructure.ServerAPI.DataModel;
+using VSystem.Internal.ServerInfrastructure.ServerAPI.Ping;
+using VSystem.Internal.ServerInfrastructure.ServerAPI.Time;
 
 namespace VSystem.Internal.ServerInfrastructure.Server;
 

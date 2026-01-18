@@ -9,8 +9,10 @@ using VSystem.Internal.ServerInfrastructure.Server.Configuration;
 using VSystem.Internal.ServerInfrastructure.Server.HandleModules.Clients;
 using VSystem.Internal.ServerInfrastructure.Server.HandleModules.DDNS;
 using VSystem.Internal.ServerInfrastructure.Server.HandleModules.Messages;
-using VSystem.Internal.Services.Data.API;
-using VSystem.Internal.Services.Data.API.Modules;
+using VSystem.Internal.Services.Data;
+using VSystem.Internal.Services.Data.Interfaces;
+using VSystem.Internal.Services.Data.Modules;
+using VSystem.Internal.Services.Registration;
 
 namespace VSystem.Internal.Bootstrap;
 
@@ -49,6 +51,8 @@ public class SystemDependencyBuilder : IDisposable
             .Register(typeof(IClientsHandler), new ClientsHandler())
             .Register(typeof(IDDNSHandler), new DDNSHandler())
             .Register(typeof(IServerMessageProcessor), new ServerMessageProcessor())
+            
+            .Register(typeof(IRegistrationService), new RegistrationService())
             ;
         
         return Task.CompletedTask;

@@ -13,7 +13,7 @@ public class AppConstants
         
         public const string PathSeparator = 
 #if WINDOWS
-            "\";
+            @"\";
 #elif MACOS
             "/";
 #endif

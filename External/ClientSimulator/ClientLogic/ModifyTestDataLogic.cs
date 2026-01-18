@@ -2,9 +2,8 @@
 using System.Text;
 using Newtonsoft.Json;
 using VSystem.Internal.Constants;
-using VSystem.Internal.ServerInfrastructure.Server_API.DataModels;
-using VSystem.Internal.ServerInfrastructure.Server_API.Ping;
 using VSystem.Internal.ServerInfrastructure.Server.ServerDataBases;
+using VSystem.Internal.ServerInfrastructure.ServerAPI.DataModel;
 
 namespace VSystem.External.ClientSimulator.ClientLogic;
 

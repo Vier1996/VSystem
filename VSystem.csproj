@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Internal\DataModels\User\" />
       <Folder Include="Internal\ServerInfrastructure\" />
       <Folder Include="Internal\Services\" />
     </ItemGroup>
