@@ -1,55 +1,67 @@
-﻿using VSystem.External.ClientSimulator;
-using VSystem.Internal.ServerInfrastructure.Server;
+﻿using VSystem.Internal.Constants;
+using VSystem.Internal.Dependencies;
+using VSystem.Internal.Operations;
 
 namespace VSystem.Internal.Bootstrap;
 
 public class SystemBootstrapper : IDisposable
 {
-    private readonly SystemDependencyBuilder _systemDependencyBuilder;
+    private readonly List<IDependencyBuilder> _dependencyBuilders;
     private readonly CancellationTokenSource _cancellation; 
-
-    private ISystemServer _systemServer;
-    private PuppetClient _puppetClient;
     
-    public SystemBootstrapper(CancellationTokenSource cancellation)
+    public SystemBootstrapper(string[] args, CancellationTokenSource cancellation)
     {
-        _systemDependencyBuilder = new SystemDependencyBuilder();
         _cancellation = cancellation;
+        _dependencyBuilders = GetDependenciesByAppArgs(args);
     }
     
     public void Dispose()
     {
-        _systemDependencyBuilder?.Dispose();
-        _systemServer?.Dispose();
-        _puppetClient?.Dispose();
+        AppDependencies.Dispose();
     }
 
-    public async Task Run(string[] args)
+    public async Task Run()
     {
-        await _systemDependencyBuilder.ResolveDependencies();
+        foreach (IDependencyBuilder builder in _dependencyBuilders)
+        {
+            ServerOperationCallback callback = await builder.Run(_cancellation);
 
-        if (args is not { Length: > 0 }) throw new ArgumentNullException(nameof(args));
+            if (callback.IsSuccess == false)
+            {
+                Console.Clear();
+                Console.WriteLine(callback.CallbackMessage);
+                
+                await _cancellation.CancelAsync();
+
+                _cancellation.Dispose();
+                
+                return;
+            }
+        }
+    }
+
+    private List<IDependencyBuilder> GetDependenciesByAppArgs(string[] args)
+    {
+        List<IDependencyBuilder> dependencies = new List<IDependencyBuilder>()
+        {
+            new AppDependenciesBuilder(),
+            new ServerDependenciesBuilder(),
+        };
+        
+        if (args is not { Length: > 0 }) 
+            throw new ArgumentNullException(nameof(args));
         
         switch (args[0])
         {
-            case "server":
-            {
-                _systemServer = new SystemServer();
-
-                await _systemServer.StartAsync();
-                
-            } break;
+            case AppConstants.Assembly.ServerAppArg: 
+                dependencies.Add(new ServerRunner());
+                break;
             
-            case "client":
-            {
-                _puppetClient =  new PuppetClient();
-
-                await _puppetClient.RunClient();
-                
-                await _cancellation.CancelAsync();
-                
-                _cancellation.Dispose();
-            } break;
+            case AppConstants.Assembly.ClientAppArg:
+                dependencies.Add(new PuppetClientRunner());
+                break;
         }
+        
+        return dependencies;
     }
 }

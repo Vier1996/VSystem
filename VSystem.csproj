@@ -21,7 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Internal\ServerInfrastructure\" />
       <Folder Include="Internal\Services\" />
     </ItemGroup>
 

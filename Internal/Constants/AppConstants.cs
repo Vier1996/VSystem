@@ -22,6 +22,9 @@ public class AppConstants
     public static class Assembly
     {
         public const string ServerAssemblyName = "VSystem";
+        
+        public const string ServerAppArg = "server";
+        public const string ClientAppArg = "client";
     }
     
     public static class Logging

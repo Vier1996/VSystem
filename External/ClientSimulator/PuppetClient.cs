@@ -2,7 +2,7 @@
 using VSystem.External.ClientSimulator.ClientLogic;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
-using VSystem.Internal.ServerInfrastructure.Server;
+using VSystem.Server.SystemServer.Configuration;
 
 namespace VSystem.External.ClientSimulator;
 

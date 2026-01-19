@@ -10,11 +10,11 @@ class Program
     { 
         _cancellation = new CancellationTokenSource();
 
-        using SystemBootstrapper systemBootstrapper = new SystemBootstrapper(_cancellation);
+        using SystemBootstrapper systemBootstrapper = new SystemBootstrapper(args, _cancellation);
 
         try
         {
-            await systemBootstrapper.Run(args);
+            await systemBootstrapper.Run();
             
             while (_cancellation.IsCancellationRequested == false)
                 await Task.Delay(Timeout.Infinite, _cancellation.Token).ConfigureAwait(false);

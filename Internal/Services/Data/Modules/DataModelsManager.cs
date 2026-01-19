@@ -2,10 +2,9 @@
 using VSystem.Internal.Constants;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
-using VSystem.Internal.Services.Data.Interfaces;
 using VSystem.Internal.Services.Data.Model;
 
-namespace VSystem.Internal.Services.Data.Modules;
+namespace VSystem.Internal.Services.Data;
 
 public class DataModelsManager : IDataModelsManager
 {

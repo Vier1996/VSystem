@@ -1,7 +1,7 @@
 ﻿using VSystem.Internal.Services.Data.Model.Server;
 using VSystem.Internal.Services.Data.Model.User;
 
-namespace VSystem.Internal.Services.Data.Interfaces;
+namespace VSystem.Internal.Services.Data;
 
 public interface IDataModelContainer
 {

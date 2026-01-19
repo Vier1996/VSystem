@@ -11,28 +11,26 @@ public record UsersEntranceModel : ServerDataModel
     
     [JsonProperty] private Dictionary<Guid, UserEntranceModel> _users = new();
 
-    public UserEntranceModel FindUserModelByLogin(string login, out ServerOperationCallback callback)
+    public UserEntranceOperationCallback FindUserModelByLogin(string login)
     {
         (_, UserEntranceModel? userModel) = _users.FirstOrDefault(kvp => kvp.Value.Login.Equals(login));
 
         if (userModel == null)
         {
-            callback = new ServerOperationCallback()
+            return new UserEntranceOperationCallback()
             {
                 IsSuccess = false,
-                CallbackMessage = $"Can not find user with login: {login}"
+                CallbackMessage = $"Can not find user with login: {login}",
+                UserModel = null
             };
-
-            return null!;
         }
         
-        callback = new ServerOperationCallback()
+        return new UserEntranceOperationCallback()
         {
             IsSuccess = true,
-            CallbackMessage = "OK"
+            CallbackMessage = "OK",
+            UserModel = userModel
         };
-
-        return userModel;
     }
     
     public bool HasUserModel(Guid giud)
@@ -134,7 +132,7 @@ public record UsersEntranceModel : ServerDataModel
             };
         }
 
-        UserEntranceModel userModel = FindUserModelByLogin(login, out ServerOperationCallback callback);
+        UserEntranceOperationCallback callback = FindUserModelByLogin(login);
 
         if (callback.IsSuccess == false)
         {
@@ -145,7 +143,7 @@ public record UsersEntranceModel : ServerDataModel
             };
         }
         
-        if (_users.Remove(userModel.Guid))
+        if (_users.Remove(callback.UserModel.Guid))
         {
             IsDirty = true;
         }

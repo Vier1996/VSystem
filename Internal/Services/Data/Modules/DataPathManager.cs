@@ -1,6 +1,4 @@
-﻿using VSystem.Internal.Services.Data.Interfaces;
-
-namespace VSystem.Internal.Services.Data.Modules;
+﻿namespace VSystem.Internal.Services.Data;
 
 public class DataPathManager : IDataPathManager
 {

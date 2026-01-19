@@ -1,6 +1,6 @@
 ﻿using VSystem.Internal.Services.Data.Model;
 
-namespace VSystem.Internal.Services.Data.Interfaces;
+namespace VSystem.Internal.Services.Data;
 
 public interface IDataModelsManager
 {

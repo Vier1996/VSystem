@@ -1,4 +1,4 @@
-﻿namespace VSystem.Internal.Services.Data.Interfaces;
+﻿namespace VSystem.Internal.Services.Data;
 
 public interface IDataPathManager
 {
