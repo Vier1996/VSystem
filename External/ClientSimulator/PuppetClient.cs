@@ -71,7 +71,7 @@ public class PuppetClient : IDisposable
 
     private async Task<string> RunRequestLogic(TcpClient client)
     {
-        IClientLogicVariant logic = new RegisterUserLogic();
+        IClientLogicVariant logic = new AuthUserLogic();
         string response;
 
         try

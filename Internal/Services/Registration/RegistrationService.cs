@@ -29,7 +29,7 @@ public class RegistrationService : IRegistrationService
         return _usersEntranceModel.HasUserModel(login);
     }
     
-    public ServerOperationCallback TryRegisterUser(string login, string password)
+    public ServerOperationCallback RegisterUser(string login, string password)
     {
         if (_usersEntranceModel.HasUserModel(login))
         {
@@ -46,12 +46,12 @@ public class RegistrationService : IRegistrationService
             .SetPassword(password));
     }
     
-    public ServerOperationCallback TryUnregisterUser(Guid guid)
+    public ServerOperationCallback UnregisterUser(Guid guid)
     {
         return _usersEntranceModel.RemoveUserModel(guid);
     }
     
-    public ServerOperationCallback TryUnregisterUser(string login)
+    public ServerOperationCallback UnregisterUser(string login)
     {
         return _usersEntranceModel.RemoveUserModel(login);
     }

@@ -2,9 +2,11 @@
 using Newtonsoft.Json;
 using VSystem.External.Extensions.ResponseModel;
 using VSystem.Internal.Dependencies;
+using VSystem.Internal.Operations;
 using VSystem.Internal.RequestArgs.Register;
 using VSystem.Internal.ResponseModels._Base;
 using VSystem.Internal.ResponseModels.Register;
+using VSystem.Internal.Services.Data;
 using VSystem.Internal.Services.Registration;
 using VSystem.Server.SystemServer.ServerDataBases;
 
@@ -26,25 +28,23 @@ public class RegisterUserExecutor : ServerApiExecutor
             return Task.FromResult(ResponseModelsCollection.BadRequestResponse);
         }
         
+        AppDependencies.Provider.Get(out IDataService dataService);
         AppDependencies.Provider.Get(out IRegistrationService registrationService);
         
-        if (registrationService.IsRegisteredUser(registerArgs.Login))
-            return Task.FromResult(new ResponseDTO()
-            {
-                StatusCode = HttpStatusCode.BadGateway,
-                Content = "User already exists!"
-            });
-
-
-        RegisterUserResponse response = new RegisterUserResponse()
-        {
-            Message = "User success register!"
-        };
+        ServerOperationCallback callback = registrationService.RegisterUser(registerArgs.Login, registerArgs.Password);
+        
+        if (callback.IsSuccess)
+            dataService.SaveAllForce();
         
         return Task.FromResult(new ResponseDTO()
         {
-            StatusCode = HttpStatusCode.OK,
-            Content = response.ToJson()
+            StatusCode = callback.IsSuccess 
+                ? HttpStatusCode.OK
+                : HttpStatusCode.BadGateway,
+            Content = new RegisterUserResponse()
+            {
+                CallbackMessage = callback.CallbackMessage
+            }.ToJson()
         });
     }
 }

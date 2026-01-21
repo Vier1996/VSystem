@@ -1,4 +1,5 @@
 ﻿using VSystem.Internal.Constants;
+using VSystem.Internal.ServerApiExecutors.Auth;
 using VSystem.Internal.ServerApiExecutors.DataModels;
 using VSystem.Internal.ServerApiExecutors.Ping;
 using VSystem.Internal.ServerApiExecutors.Register;
@@ -14,6 +15,7 @@ public class ServerApiExecutorsBridge
         { AppConstants.ServerAPI.ServerPing, typeof(ServerGettingPingExecutor) },
         { AppConstants.ServerAPI.DataModelTestModify, typeof(ModifyTestDataModelExecutor) },
         { AppConstants.ServerAPI.Register.RegisterUser, typeof(RegisterUserExecutor) },
+        { AppConstants.ServerAPI.Authentication.AuthenticateUser, typeof(AuthUserExecutor) },
     };
         
     public bool TryGetExecutor(string api, out ServerApiExecutor executor)

@@ -3,5 +3,5 @@
 [System.Serializable]
 public record RegisterUserResponse : ResponseModelBase
 {
-    public string Message { get; init; }
+    public string CallbackMessage { get; init; }
 }

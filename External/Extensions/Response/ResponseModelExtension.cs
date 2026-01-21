@@ -11,7 +11,7 @@ public static class ResponseModelExtension
       return JsonConvert.SerializeObject(responseModel, Formatting.Indented);
    }
    
-   public static ResponseModelBase FromJson(this string json)
+   public static ResponseModelBase ToResponseModelBase(this string json)
    {
       ResponseModelBase model = JsonConvert.DeserializeObject<ResponseModelBase>(json);
 

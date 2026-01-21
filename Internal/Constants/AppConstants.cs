@@ -118,5 +118,10 @@ public class AppConstants
         {
             public const string RegisterUser = "Reg/Register"; // регистрация юзера
         }
+        
+        public static class Authentication
+        {
+            public const string AuthenticateUser = "Auth/Authenticate"; // auth юзера
+        }
     }
 }

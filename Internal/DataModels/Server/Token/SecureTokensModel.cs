@@ -78,7 +78,7 @@ public record SecureTokensModel : ServerDataModel
         
         _tokens[userGuid] = info;
 
-        IsDirty = true;
+        SetModelDirty();
         
         return new ServerOperationCallback()
         {
@@ -100,7 +100,7 @@ public record SecureTokensModel : ServerDataModel
         
         if (_tokens.Remove(userGuid))
         {
-            IsDirty = true;
+            SetModelDirty();
         }
        
         return new ServerOperationCallback()

@@ -10,7 +10,7 @@ public static class ResponseDtoExtension
         return JsonConvert.SerializeObject(responseDto, Formatting.Indented);
     }
    
-    public static ResponseDTO FromJson(this string json)
+    public static ResponseDTO ToResponseDTO(this string json)
     {
         ResponseDTO dto = JsonConvert.DeserializeObject<ResponseDTO>(json);
 

@@ -14,6 +14,6 @@ public record TestServerDataModel : ServerDataModel
         TestNumber = number;
         _testNumber1 = number + 5;
 
-        IsDirty = true;
+        SetModelDirty();
     }
 }

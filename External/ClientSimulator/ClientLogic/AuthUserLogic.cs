@@ -4,17 +4,19 @@ using Newtonsoft.Json;
 using VSystem.External.Extensions.RequestArgs;
 using VSystem.External.Extensions.ResponseModel;
 using VSystem.Internal.Constants;
+using VSystem.Internal.RequestArgs.Auth;
 using VSystem.Internal.RequestArgs.Register;
+using VSystem.Internal.ResponseModels.Auth;
 using VSystem.Internal.ResponseModels.Register;
 using VSystem.Server.SystemServer.ServerDataBases;
 
 namespace VSystem.External.ClientSimulator.ClientLogic;
 
-public class RegisterUserLogic : IClientLogicVariant
+public class AuthUserLogic : IClientLogicVariant
 {
     public async Task<string> Run(TcpClient client)
     {
-        RegisterUserRequestArgs requestArgs = new()
+        AuthUserRequestArgs requestArgs = new()
         {
             Login = "MrVier",
             Password = "Qwerty69",
@@ -22,7 +24,7 @@ public class RegisterUserLogic : IClientLogicVariant
 
         string json = JsonConvert.SerializeObject(new RequestDTO()
         {
-            RequestApi = AppConstants.ServerAPI.Register.RegisterUser,
+            RequestApi = AppConstants.ServerAPI.Authentication.AuthenticateUser,
             RequestArgs = requestArgs.ToJson(),
         });
 
@@ -45,7 +47,7 @@ public class RegisterUserLogic : IClientLogicVariant
                 Formatting = Formatting.Indented,
             })!;
         
-        RegisterUserResponse response = JsonConvert.DeserializeObject<RegisterUserResponse>(
+        AuthUserResponse response = JsonConvert.DeserializeObject<AuthUserResponse>(
             value: responseDto.Content,
             settings: new JsonSerializerSettings()
             {
@@ -53,7 +55,7 @@ public class RegisterUserLogic : IClientLogicVariant
             })!;
         
         return 
-            "----- (RegisterUserRequest) ------\n" +
+            "----- (AuthUserRequest) ------\n" +
             $"Status: {responseDto.StatusCode.ToString()}\n" + 
             $"Response: \n{response.ToJson()}\n" +
             "-----------------------------------"

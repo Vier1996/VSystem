@@ -67,7 +67,7 @@ public record UsersEntranceModel : ServerDataModel
         
         _users[userModel.Guid] = userModel;
 
-        IsDirty = true;
+        SetModelDirty();
         
         return new ServerOperationCallback()
         {
@@ -89,7 +89,7 @@ public record UsersEntranceModel : ServerDataModel
         
         _users[userModel.Guid] = userModel;
         
-        IsDirty = true;
+        SetModelDirty();
 
         return new ServerOperationCallback()
         {
@@ -111,7 +111,7 @@ public record UsersEntranceModel : ServerDataModel
 
         if (_users.Remove(guid))
         {
-            IsDirty = true;
+            SetModelDirty();
         }
         
         return new ServerOperationCallback()
@@ -145,7 +145,7 @@ public record UsersEntranceModel : ServerDataModel
         
         if (_users.Remove(callback.UserModel.Guid))
         {
-            IsDirty = true;
+            SetModelDirty();
         }
         
         return new ServerOperationCallback()
