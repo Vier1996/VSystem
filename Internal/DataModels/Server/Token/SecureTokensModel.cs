@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using VSystem.Internal.Operations;
 using VSystem.Internal.Services.Data.Model.Server;
+using VSystem.Internal.Services.Token;
 
 namespace VSystem.Internal.DataModels.Server.Token;
 
@@ -16,35 +17,34 @@ public record SecureTokensModel : ServerDataModel
         return _tokens.ContainsKey(userGuid);
     }
     
-    public SecureTokenInfoModel GetToken(Guid userGuid, out ServerOperationCallback callback)
+    public GetTokenOperationCallback GetToken(Guid userGuid)
     {
         if (userGuid.Equals(Guid.Empty))
         {
-            callback = new ServerOperationCallback()
+            return new GetTokenOperationCallback()
             {
                 IsSuccess = false,
-                CallbackMessage = "Not valid user guid"
+                CallbackMessage = "Not valid user guid",
+                TokenInfo = null,
             };
-            
-            return null;
         }
 
-        if (_tokens.TryGetValue(userGuid, out var tokenInfo) == false)
+        if (_tokens.TryGetValue(userGuid, out SecureTokenInfoModel tokenInfo) == false)
         {
-            callback = new ServerOperationCallback()
+            return new GetTokenOperationCallback()
             {
                 IsSuccess = false,
-                CallbackMessage = "Token not exist"
+                CallbackMessage = "Token not exist",
+                TokenInfo = null,
             };
         }
         
-        callback = new ServerOperationCallback()
+        return new GetTokenOperationCallback()
         {
             IsSuccess = true,
-            CallbackMessage = "OK"
+            CallbackMessage = "OK",
+            TokenInfo = tokenInfo,
         };
-
-        return tokenInfo;
     }
 
     public ServerOperationCallback AddToken(Guid userGuid, SecureTokenInfoModel info)

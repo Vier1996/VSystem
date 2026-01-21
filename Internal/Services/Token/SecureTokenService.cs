@@ -44,22 +44,21 @@ public class SecureTokenService : ISecureTokenService
     {
         lock (_lockObject)
         {
-            SecureTokenInfoModel tokenInfo = _secureTokensModel.GetToken(userGuid, out ServerOperationCallback callback);
+            GetTokenOperationCallback callback = _secureTokensModel.GetToken(userGuid);
 
-            if (HasActiveToken(tokenInfo))
+            if (callback.IsSuccess && HasActiveToken(callback.TokenInfo))
             {
                 _loggingService.LogMessage(
                     message: $"Returning existing token for user {userGuid}",
                     sender: this);
                 
-                return tokenInfo.Token;
+                return callback.TokenInfo.Token;
             }
             
             SecureTokenInfoModel newToken = new SecureTokenInfoModel()
                 .SetToken(GenerateSecureToken(userGuid))
-                .SetUserGuid(userGuid)
-                .SetCreatedAt(DateTime.UtcNow)
-                .SetExpiresAt(DateTime.UtcNow.Add(_tokenExpirationTime));
+                .SetCreatedAt(DateTime.UtcNow.ToLocalTime())
+                .SetExpiresAt(DateTime.UtcNow.ToLocalTime().Add(_tokenExpirationTime));
             
             _secureTokensModel.AddToken(userGuid, newToken);
 
@@ -92,9 +91,9 @@ public class SecureTokenService : ISecureTokenService
     {
         lock (_lockObject)
         {
-            SecureTokenInfoModel tokenInfo = _secureTokensModel.GetToken(userGuid, out ServerOperationCallback callback);
+            GetTokenOperationCallback callback = _secureTokensModel.GetToken(userGuid);
 
-            return callback.IsSuccess && tokenInfo.ExpiresAt > DateTime.UtcNow;
+            return callback.IsSuccess && callback.TokenInfo.ExpiresAt > DateTime.UtcNow;
         }
     }
     
