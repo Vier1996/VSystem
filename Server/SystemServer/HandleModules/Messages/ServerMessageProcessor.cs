@@ -1,9 +1,12 @@
 using System.Net;
 using System.Net.Sockets;
 using Newtonsoft.Json;
+using VSystem.External.Extensions.ResponseModel;
 using VSystem.Internal.Constants;
 using VSystem.Internal.Dependencies;
-using VSystem.Server.API;
+using VSystem.Internal.Logging;
+using VSystem.Internal.ResponseModels._Base;
+using VSystem.Internal.ServerApiExecutors;
 using VSystem.Server.SystemServer.Configuration;
 using VSystem.Server.SystemServer.HandleModules.Clients.Interfaces;
 using VSystem.Server.SystemServer.HandleModules.Messages.Interfaces;
@@ -17,6 +20,7 @@ namespace VSystem.Server.SystemServer.HandleModules.Messages;
 public class ServerMessageProcessor : IServerMessageProcessor
 {
     private readonly IClientsHandler _clientsHandler;
+    private readonly ILoggingService _loggingService;
     private readonly ServerNetworkSettings _serverNetworkSettings;
     private readonly ServerApiExecutorsBridge _serverApiExecutorsBridge;
 
@@ -24,6 +28,7 @@ public class ServerMessageProcessor : IServerMessageProcessor
     {
         AppDependencies.Provider
             .Get(out _clientsHandler)
+            .Get(out _loggingService)
             .Get(out _serverNetworkSettings)
             .Get(out _serverApiExecutorsBridge);
     }
@@ -57,20 +62,24 @@ public class ServerMessageProcessor : IServerMessageProcessor
                 return;
             }
 
-            string responseJson = await executor.Execute(clientCommandRequest);
+            ResponseDTO response = await executor.Execute(clientCommandRequest);
+
+            if (response == null)
+                throw new ArgumentException($"Response [{api}] can not be null!");
             
             await _clientsHandler.SendMessageToClientAsync(
                 clientSocket: clientSocket,
-                responseJson: responseJson);
+                responseJson: response.ToJson());
         }
         catch (Exception ex)
         {
+            _loggingService.LogError(
+                message: ex.Message, 
+                sender: this);
+            
             await _clientsHandler.SendMessageToClientAsync(
                 clientSocket: clientSocket,
-                responseJson: string.Format(format: AppConstants.Server.FailedExecutingToClientResponseMessage,
-                    arg0: HttpStatusCode.InternalServerError,
-                    arg1: message,
-                    arg2: ex.Message));
+                responseJson: ResponseModelsCollection.ErrorResponse.ToJson());
         }
         finally
         {

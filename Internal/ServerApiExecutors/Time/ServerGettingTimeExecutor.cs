@@ -1,15 +1,15 @@
 ﻿using System.Net;
 using Newtonsoft.Json;
-using VSystem.Server.API.Time.Responses;
+using VSystem.Internal.ResponseModels.Time;
 using VSystem.Server.SystemServer.ServerDataBases;
 
-namespace VSystem.Server.API.Time;
+namespace VSystem.Internal.ServerApiExecutors.Time;
 
 public class ServerGettingTimeExecutor : ServerApiExecutor
 {
     public override void Dispose() { }
 
-    public override Task<string> Execute(RequestDTO request)
+    public override Task<ResponseDTO> Execute(RequestDTO requestDto)
     {
         DateTime serverTime = DateTime.Now;
         GetServerTimeResponseData responseData = new GetServerTimeResponseData()
@@ -19,12 +19,10 @@ public class ServerGettingTimeExecutor : ServerApiExecutor
             Seconds = serverTime.Second,
         };
         
-        ResponseDTO responseDto = new ResponseDTO()
+        return Task.FromResult(new ResponseDTO()
         {
             StatusCode = HttpStatusCode.OK,
-            Message = JsonConvert.SerializeObject(responseData, Formatting.Indented),
-        };
-        
-        return Task.FromResult(JsonConvert.SerializeObject(responseDto, Formatting.Indented));
+            Content = JsonConvert.SerializeObject(responseData, Formatting.Indented),
+        });
     }
 }

@@ -113,5 +113,10 @@ public class AppConstants
         public const string ServerTime = "Server/Time"; // получение времени на сервере (тест)
         public const string ServerPing = "Server/Ping"; // пропинговочка
         public const string DataModelTestModify = "Data/Model/ModifyTestModel"; // тестовое модифицирование модели
+
+        public static class Register
+        {
+            public const string RegisterUser = "Reg/Register"; // регистрация юзера
+        }
     }
 }

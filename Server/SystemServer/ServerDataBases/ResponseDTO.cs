@@ -6,5 +6,5 @@ namespace VSystem.Server.SystemServer.ServerDataBases;
 public record ResponseDTO
 {
     public HttpStatusCode StatusCode { get; init; } = HttpStatusCode.Processing;
-    public string Message { get; init; } = string.Empty; 
+    public string Content { get; init; } = string.Empty; 
 }

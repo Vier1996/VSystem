@@ -48,7 +48,7 @@ public class PuppetClient : IDisposable
                 
                 string response = await RunRequestLogic(client);
                 
-                _loggingService.LogMessage(message: $"✅ Ответ: [{response}]", sender: this);
+                _loggingService.LogMessage(message: $"✅ Ответ: \n{response}", sender: this);
                 
                 client.Close();
                 
@@ -71,7 +71,7 @@ public class PuppetClient : IDisposable
 
     private async Task<string> RunRequestLogic(TcpClient client)
     {
-        IClientLogicVariant logic = new ModifyTestDataLogic();
+        IClientLogicVariant logic = new RegisterUserLogic();
         string response;
 
         try

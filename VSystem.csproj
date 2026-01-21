@@ -21,6 +21,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Internal\RequestArgs\Auth\" />
+      <Folder Include="Internal\ResponseModels\Auth\" />
+      <Folder Include="Internal\ServerApiExecutors\Auth\" />
       <Folder Include="Internal\Services\" />
     </ItemGroup>
 

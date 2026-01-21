@@ -2,7 +2,7 @@
 using System.Text;
 using Newtonsoft.Json;
 using VSystem.Internal.Constants;
-using VSystem.Server.API.Ping.Respones;
+using VSystem.Internal.ResponseModels.Ping;
 using VSystem.Server.SystemServer.ServerDataBases;
 
 namespace VSystem.External.ClientSimulator.ClientLogic;
@@ -34,7 +34,7 @@ public class GetPingLogic : IClientLogicVariant
             Formatting = Formatting.Indented,
         })!;
             
-        GetServerPingResponseData responsePingData = JsonConvert.DeserializeObject<GetServerPingResponseData>(responseDto.Message, settings: new JsonSerializerSettings()
+        GetServerPingResponseData responsePingData = JsonConvert.DeserializeObject<GetServerPingResponseData>(responseDto.Content, settings: new JsonSerializerSettings()
         {
             Formatting = Formatting.Indented,
         })!;

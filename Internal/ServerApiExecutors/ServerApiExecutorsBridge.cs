@@ -1,9 +1,10 @@
 ﻿using VSystem.Internal.Constants;
-using VSystem.Server.API.DataModel;
-using VSystem.Server.API.Ping;
-using VSystem.Server.API.Time;
+using VSystem.Internal.ServerApiExecutors.DataModels;
+using VSystem.Internal.ServerApiExecutors.Ping;
+using VSystem.Internal.ServerApiExecutors.Register;
+using VSystem.Internal.ServerApiExecutors.Time;
 
-namespace VSystem.Server.API;
+namespace VSystem.Internal.ServerApiExecutors;
 
 public class ServerApiExecutorsBridge
 {
@@ -12,6 +13,7 @@ public class ServerApiExecutorsBridge
         { AppConstants.ServerAPI.ServerTime, typeof(ServerGettingTimeExecutor) },
         { AppConstants.ServerAPI.ServerPing, typeof(ServerGettingPingExecutor) },
         { AppConstants.ServerAPI.DataModelTestModify, typeof(ModifyTestDataModelExecutor) },
+        { AppConstants.ServerAPI.Register.RegisterUser, typeof(RegisterUserExecutor) },
     };
         
     public bool TryGetExecutor(string api, out ServerApiExecutor executor)

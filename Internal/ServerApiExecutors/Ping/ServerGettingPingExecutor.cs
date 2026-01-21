@@ -1,27 +1,25 @@
 using System.Net;
 using Newtonsoft.Json;
-using VSystem.Server.API.Ping.Respones;
+using VSystem.Internal.ResponseModels.Ping;
 using VSystem.Server.SystemServer.ServerDataBases;
 
-namespace VSystem.Server.API.Ping;
+namespace VSystem.Internal.ServerApiExecutors.Ping;
 
 public class ServerGettingPingExecutor : ServerApiExecutor
 {
     public override void Dispose() { }
 
-    public override Task<string> Execute(RequestDTO request)
+    public override Task<ResponseDTO> Execute(RequestDTO request)
     {
         GetServerPingResponseData responseData = new GetServerPingResponseData()
         {
             PingValue = 1
         };
         
-        ResponseDTO responseDto = new ResponseDTO()
+        return Task.FromResult(new ResponseDTO()
         {
             StatusCode = HttpStatusCode.OK,
-            Message = JsonConvert.SerializeObject(responseData, Formatting.Indented),
-        };
-        
-        return Task.FromResult(JsonConvert.SerializeObject(responseDto, Formatting.Indented));
+            Content = JsonConvert.SerializeObject(responseData, Formatting.Indented),
+        });
     }
 }

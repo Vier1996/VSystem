@@ -1,19 +1,21 @@
 ﻿using System.Net;
 using Newtonsoft.Json;
+using VSystem.External.Extensions.ResponseModel;
 using VSystem.Internal.DataModels.Testable;
 using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
+using VSystem.Internal.ResponseModels._Base;
+using VSystem.Internal.ResponseModels.DataModels;
 using VSystem.Internal.Services.Data;
-using VSystem.Server.API.DataModel.Responses;
 using VSystem.Server.SystemServer.ServerDataBases;
 
-namespace VSystem.Server.API.DataModel;
+namespace VSystem.Internal.ServerApiExecutors.DataModels;
 
 public class ModifyTestDataModelExecutor : ServerApiExecutor
 {
     public override void Dispose() { }
    
-    public override Task<string> Execute(RequestDTO request)
+    public override Task<ResponseDTO> Execute(RequestDTO request)
     {
         AppDependencies.Provider
             .Get(out ILoggingService loggingService)
@@ -35,26 +37,18 @@ public class ModifyTestDataModelExecutor : ServerApiExecutor
             {
                 NewValue = newValue,
             };
-        
-            ResponseDTO responseDto = new ResponseDTO()
+            
+            return Task.FromResult(new ResponseDTO()
             {
                 StatusCode = HttpStatusCode.OK,
-                Message = JsonConvert.SerializeObject(responseData, Formatting.Indented),
-            };
-        
-            return Task.FromResult(JsonConvert.SerializeObject(responseDto, Formatting.Indented));
+                Content = JsonConvert.SerializeObject(responseData, Formatting.Indented),
+            });
         }
         catch (Exception e)
         {
-            ResponseDTO responseDto = new ResponseDTO()
-            {
-                StatusCode = HttpStatusCode.InternalServerError,
-                Message = JsonConvert.SerializeObject(string.Empty, Formatting.Indented),
-            };
-
             loggingService.LogError("Сдохло сохранение...");
 
-            return Task.FromResult(JsonConvert.SerializeObject(responseDto, Formatting.Indented));
+            return Task.FromResult(ResponseModelsCollection.ErrorResponse);
         }
     }
 }
