@@ -16,11 +16,16 @@
     </PropertyGroup>
     
     <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="UniRx" Version="5.4.1" />
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Internal\Environment\" />
       <Folder Include="Internal\Services\" />
     </ItemGroup>
 

@@ -1,41 +1,40 @@
-﻿using VSystem.Internal.Bootstrap;
+﻿using VSystem.Client;
+using VSystem.Constants;
+using VSystem.Server;
 
 namespace VSystem;
 
 class Program
 {
-    private static CancellationTokenSource _cancellation; 
-    private static SystemBootstrapper? _systemBootstrapper;
-    
+    private static CancellationTokenSource _cancellation = null!;
+
     public static async Task Main(string[] args)
-    { 
+    {
         _cancellation = new CancellationTokenSource();
-        _systemBootstrapper = new SystemBootstrapper(args, _cancellation);
 
         SetupExternalProgramCanceling();
-        
-        try
-        {
-            await _systemBootstrapper.Run();
 
-            while (_cancellation.IsCancellationRequested == false)
-                await Task.Delay(Timeout.Infinite, _cancellation.Token).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException e) { }
-        catch (Exception ex)
+        if (IsClientMode(args))
         {
-            Console.WriteLine($"Failed to start system: {ex.Message}");
+            RestClientRunner clientRunner = new RestClientRunner();
+            
+            await clientRunner.RunAsync(_cancellation.Token);
+            
+            return;
         }
-        finally
-        {
-            _systemBootstrapper?.Dispose();
-            _cancellation?.Dispose();
-        }
+
+        await new ServerRunner().RunAsync(args, _cancellation.Token);
     }
-    
+
+    private static bool IsClientMode(string[] args)
+    {
+        return args.Length > 0 &&
+               args[0].Equals(AssemblyConstants.ClientAppArg, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static void SetupExternalProgramCanceling()
     {
-        Console.CancelKeyPress += (sender, e) =>
+        Console.CancelKeyPress += (_, e) =>
         {
             e.Cancel = true;
             _cancellation.Cancel();

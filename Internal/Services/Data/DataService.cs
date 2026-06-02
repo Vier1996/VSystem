@@ -1,10 +1,9 @@
 ﻿using VSystem.External.Extensions.UniRx;
-using VSystem.Internal.Assembly;
-using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
 using VSystem.Internal.Services.Data.Container;
 using VSystem.Internal.Services.Data.Model.Server;
 using VSystem.Internal.Services.Data.Model.User;
+using VSystem.Tools;
 
 namespace VSystem.Internal.Services.Data;
 
@@ -16,7 +15,6 @@ public record DataServiceInitializeArgs
 
 public class DataService : IDataService
 {
-    private readonly AssemblyManager _assemblyManager;
     private readonly ILoggingService _loggingService;
     
     private readonly IDataPathManager _pathManager; 
@@ -30,15 +28,13 @@ public class DataService : IDataService
     
     public DataService(DataServiceInitializeArgs initializeArgs)
     {
-        AppDependencies.Provider
-            .Get(out _assemblyManager)
-            .Get(out _loggingService);
+        _loggingService = new LoggingService();
         
         _pathManager = new DataPathManager(initializeArgs.PathInitializeArgs);
-        _modelsManager = new DataModelsManager(_pathManager);
+        _modelsManager = new DataModelsManager(_pathManager, _loggingService);
         
-        _serverModelTypes = _assemblyManager.GetTypes<ServerModelAttribute, ServerDataModel>();
-        _userModelTypes = _assemblyManager.GetTypes<UserModelAttribute, UserDataModel>();
+        _serverModelTypes = AssemblyTool.GetTypes<ServerModelAttribute, ServerDataModel>();
+        _userModelTypes = AssemblyTool.GetTypes<UserModelAttribute, UserDataModel>();
         _modelContainer = new DataModelContainer(LoadServerDataModels());
 
         _autoSaveDisposable = UniRxExtension.LoopedTimer(initializeArgs.AutoSaveDelay, initializeArgs.AutoSaveDelay, SaveAllDataModels);

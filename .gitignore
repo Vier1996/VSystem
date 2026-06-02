@@ -44,5 +44,8 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-/External/ServerResources/
+# Secrets
+SecretsKeys/
+SecretKeys/
+
 /.idea/.idea.VSystem/.idea/AndroidProjectSystem.xml

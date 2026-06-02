@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using VSystem.Internal.Constants;
-using VSystem.Internal.Dependencies;
 using VSystem.Internal.Logging;
 using VSystem.Internal.Services.Data.Model;
 
@@ -11,11 +9,10 @@ public class DataModelsManager : IDataModelsManager
     private readonly ILoggingService _loggingService;
     private readonly IDataPathManager _dataPathManager;
     
-    public DataModelsManager(IDataPathManager dataPathManager)
+    public DataModelsManager(IDataPathManager dataPathManager, ILoggingService loggingService)
     {
-        AppDependencies.Provider.Get(out _loggingService);
-        
         _dataPathManager = dataPathManager;
+        _loggingService = loggingService;
     }
     
     public void SaveServerDataModelInStorage(DataModelBase modelBase)
@@ -76,13 +73,13 @@ public class DataModelsManager : IDataModelsManager
         }
         catch (Exception ex)
         {
-            string failureMessage = string.Format(
+            /*string failureMessage = string.Format(
                 format: AppConstants.Data.FailureDataModelSavingMessage,
                 arg0: modelBase?.GetType().Name, 
                 arg1: path,
                 arg2: ex.Message);
             
-            _loggingService.LogError(failureMessage, this);
+            _loggingService.LogError(failureMessage, this);*/
         }
     }
     
